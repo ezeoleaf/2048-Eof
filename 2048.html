@@ -320,19 +320,24 @@ function rollBackGame()
 				if($.inArray(nameIAndJTemp,vPrevMoveArrays) != -1)
 				{
 					numberToBrick = vPrevMove[$.inArray(nameIAndJTemp,vPrevMoveArrays)];
+					numBackGround = parseInt(numberToBrick);
 				}
 				else
 				{
 					numberToBrick = "";
+					numBackGround = 0;
 				}
 				if(i == 1 && j == 1)
 				{
-					especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+					especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+
 				}
 				else
 				{
-					especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+					especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
 				}
+				tempNameBackground = "#brick"+i.toString()+"-"+j.toString();
+				$(tempNameBackground).css('background',getBackground(numBackGround));
 				posBrick_x += 62;
 			}
 			posBrick_x = 0;
@@ -614,11 +619,64 @@ function controlEmpty(iTemp,jTemp)
 	}
 }
 
+function getNumberColor(number)
+{
+	switch (number)
+	{
+		case 0:
+			color = '';
+			break;
+		case 2:
+			color = 'color: black;';
+			break;
+		case 4:
+			color = 'color: black;';
+			break;
+		case 8:
+			color = 'color: white;';
+			break;
+		case 16:
+			color = 'color: white;';
+			break;
+		case 32:
+			color = 'color: white;';
+			break;
+		case 64:
+			color = 'color: white;';
+			break;
+		case 128:
+			color = 'color: white;';
+			break;
+		case 256:
+			color = 'color: white;';
+			break;
+		case 512:
+			color = 'color: white;';
+			break;
+		case 1024:
+			color = 'color: white;';
+			break;
+		case 2048: //Cambiar
+			color = '#FAD870';
+			break;
+		case 4096:
+			color = '#FAD870';
+			break;
+		case 8192:
+			color = '#FAD870';
+			break;
+	}
+	return color;
+}
+
 //Devuelve un color para background segun el numero que se pase
 function getBackground(number,pos)
 {
 	switch (number)
 	{
+		case 0:
+			color = '#e3e3e3';
+			break;
 		case 2:
 			color = '#eee4da';
 			$('#brick'+pos).children('div').children('span').css('color','black');
