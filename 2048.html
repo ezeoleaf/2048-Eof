@@ -1,0 +1,745 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+	<title>2048</title>
+	<script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="jquery.timer.js" type="text/javascript"></script>
+	<link href="2048Style.css" rel="stylesheet" type="text/css" />
+	<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script-->
+</head> 
+<script>
+/*
+BrickArray muestra los cuadrados que tienen un numero en su interior
+ControledBricks contiene las posiciones que ya fueron controladas para moverse
+*/
+var bricksArray = [];
+var posArray = [];
+var controledBricks = [];
+var prevMove = [];
+var prevMoveArrays = [];
+
+function loadBrick()
+{
+	var especificBrick;
+	for(var i = 1; i <= 4; i++)
+	{
+		for(var j = 1; j <= 4; j++)
+		{
+			if(i == 1 && j == 1)
+			{
+				especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span></span></div></div>';
+			}
+			else
+			{
+				especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span></span></div></div>';
+			}
+			posBrick_x += 62;
+		}
+		posBrick_x = 0;
+		posBrick_y += 62;
+	}
+	$('#court').html(especificBrick);
+	
+}
+
+function loseControl()
+{
+	loseGame = 1;
+	numLeftBrick = -1;
+	numRightBrick = -1;
+	numTopBrick = -1;
+	numUnderBrick = -1;
+	for(var i = 1; i <= 4; i++)
+	{
+		for (var j = 1; j <= 4; j++)
+		{
+			loseControlName = i.toString()+'-'+j.toString();
+			//Cuatro controles para izquierda, derecha, arriba y abajo			
+			numInBrick = parseInt($('#brick'+loseControlName).children('div').children('span').text());
+			if((j - 1) > 0){
+				numLeftBrick = parseInt($('#brick'+(i.toString())+'-'+(j - 1).toString()).children('div').children('span').text());
+			}
+			if((i - 1) > 0){
+				numTopBrick = parseInt($('#brick'+((i - 1).toString())+'-'+j.toString()).children('div').children('span').text());
+			}
+			if((j + 1) < 5){
+				numRightBrick = parseInt($('#brick'+(i.toString())+'-'+(j + 1).toString()).children('div').children('span').text());
+			}
+			if((i + 1) < 5){
+				numUnderBrick = parseInt($('#brick'+((i + 1).toString())+'-'+j.toString()).children('div').children('span').text());
+			}
+			
+			if((numLeftBrick == numInBrick) || (numRightBrick == numInBrick) || (numTopBrick == numInBrick) || (numUnderBrick == numInBrick))
+			{
+				loseGame = 0;
+			}
+			
+			if(loseGame == 0)
+			{
+				break;
+			}
+			numLeftBrick = -1;
+			numRightBrick = -1;
+			numTopBrick = -1;
+			numUnderBrick = -1;
+		}
+	}
+	
+	function noBorder_i(i,j)
+	{
+		if((i - 1) == 0 || (i + 1) == 5)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+}
+
+/*
+SideNumber se refiere a que lado se tiene que mover los cuadritos.
+0 - Inicial, buscar una posicion cualquiera para agregar un cuadrito
+1 - Izquierda, mueve los cuadros a la izquierda y agrega uno en una posicion vacia
+2 - Derecha, mueve los cuadros a la derecha y agrega uno en una posicion vacia
+3 - Arriba, mueve los cuadros hacia arriba y agrega uno en una posicion vacia
+4 - Abajo, mueve los cuadros hacia abajo y agrega uno en una posicion vacia
+*/
+
+function keyUpControl(sideNumber)
+{
+	if(loseGame == 0){
+		switch (sideNumber)
+		{
+			case 0:
+				random_x = (1 + Math.floor(Math.random() * 4));
+				random_y = (1 + Math.floor(Math.random() * 4));
+				tempName = '#brick'+(random_x.toString())+'-'+(random_y.toString());
+				especificBrick = '<div class="numberBrick"><span>2</span></div>';
+				$(tempName).css('display','none');
+				$(tempName).html(especificBrick);
+				$(tempName).fadeIn('slow');
+				$(tempName).css('background',getBackground(2));
+				bricksArray.push(((random_x.toString())+'-'+(random_y.toString())));
+				break;
+			case 1:
+				controlBricks(1);
+				if(bricksArray.length == 16){
+					loseControl();
+				}
+				break;
+			case 2:
+				controlBricks(2);
+				if(bricksArray.length == 16){
+					loseControl();
+				}
+				break;
+			case 3:
+				controlBricks(3);
+				if(bricksArray.length == 16){
+					loseControl();
+				}
+				break;
+			case 4:
+				controlBricks(4);
+				if(bricksArray.length == 16){
+					loseControl();
+				}
+				break;
+		}
+	}
+	else
+	{
+		$('#testClick').html('<span>Lose</span>');
+	}
+}
+
+function splitAndMove(side,iI,iJ)
+{
+	tempIAndJName = iI.toString()+'-'+iJ.toString();
+	if($.inArray(tempIAndJName,bricksArray) != -1)
+	{
+		if(side == 3 || side == 4){
+			iI = iJ;
+		}
+		var controlToSplit = emptyControl(side,iI,tempIAndJName);
+		var vControlToSplit = controlToSplit.split('/--/');
+		if(vControlToSplit[0] == 1)
+		{
+			numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+			moveBricks(tempIAndJName, vControlToSplit[1], parseInt(numInBrick));
+			addBrickControl = 1;
+		}
+		else if(vControlToSplit[0] == 2)
+		{
+			numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+			resultNumInBrick = parseInt(numInBrick) + parseInt(numInBrick);
+			numSumUp = resultNumInBrick;
+			score += resultNumInBrick;
+			$('#pointsText').html(score);
+			moveBricks(tempIAndJName, vControlToSplit[1], resultNumInBrick);
+			addBrickControl = 1;
+		}
+	}
+}
+
+function controlBricks(side)
+{
+	//$('#testClick').html('<span>'+bricksArray.length.toString()+'</span>');
+	addBrickControl = 0;
+	controlArray();
+	switch (side)
+	{
+		case 1:
+			for( var i = 1; i <= 4; i++)
+			{
+				numSumUp = 0;
+				for ( var j = 1; j <= 4; j++)
+				{
+					splitAndMove(side,i,j);
+				}
+			}
+			break;
+		case 2:
+			for( var i = 1; i <= 4; i++)
+			{
+				numSumUp = 0;
+				for ( var j = 4; j >= 1; j--)
+				{
+					splitAndMove(side,i,j);
+				}
+			}
+			break;
+		case 3:
+			for( var i = 1; i <= 4; i++)
+			{
+				numSumUp = 0;
+				for ( var j = 1; j <= 4; j++)
+				{
+					splitAndMove(side,j,i);
+				}
+			}
+			break;
+		case 4:
+			for( var i = 4; i >= 1; i--)
+			{
+				numSumUp = 0;
+				for ( var j = 4; j >= 1; j--)
+				{
+					splitAndMove(side,j,i);
+				}
+			}
+			break;
+	}
+	if(addBrickControl == 1){
+		addBrick();
+	}
+}
+
+function controlArray()
+{
+	//Es menor a 6 por que solo se pueden cinco movimientos previos
+	if(prevMove.length != 5){
+		addNewPos();
+	}
+	else
+	{
+		prevMove.splice(0,1);
+		prevMoveArrays.splice(0,1);
+		addNewPos();
+	}
+}
+
+
+/*
+moveBricks toma la oldPos para vaciar el contenido y llevarlo a newPos agregandole el numberToAssign
+oldPos se tiene que sacar del bricksArray, tomar el numero que tiene y cambiarle el background
+newPos se tiene que agregar a bricksArray, cambiarle el background con el numero que corresponde
+*/
+function moveBricks(oldPos,newPos,numberToAssign)
+{
+	
+	$('#brick'+oldPos).html('<div class="numberBrick"><span></span></div>');
+	$('#brick'+oldPos).css('background-color','#e3e3e3');
+	$('#brick'+newPos).html('<div class="numberBrick"><span>'+numberToAssign+'</span></div>');
+	$('#brick'+newPos).css('background-color',getBackground(numberToAssign,newPos));
+	
+	//Saca del array el valor oldPos --Se suplanto la funcion pop, por que solo sacaba el ultimo agregado
+	bricksArray.splice( $.inArray(oldPos,bricksArray) ,1 );
+	if($.inArray(newPos,bricksArray) == -1){
+		bricksArray.push(newPos);
+	}
+}
+
+function addNewPos()
+{
+	textToAddToPrevMove = '';
+	textToAddToBricksArray = '';
+	for(var i = 1; i <= 4; i++)
+	{
+		for(var j = 1; j <= 4; j++)
+		{
+			tempIAndJName = i.toString()+'-'+j.toString();
+			numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();			
+			if(numInBrick != "")
+			{
+				textToAddToPrevMove = textToAddToPrevMove + $('#brick'+tempIAndJName).children('div').children('span').text();
+				if(i != 4 || j != 4)
+				{
+					textToAddToPrevMove += '/--/';
+				}	
+			}			
+		}
+	}
+	prevMove.push(textToAddToPrevMove);
+	for(var i = 0; i < bricksArray.length; i++)
+	{
+		textToAddToBricksArray += bricksArray[i];
+		if(i != (bricksArray.length - 1))
+		{
+			textToAddToBricksArray += '/--/';
+		}
+	}
+	prevMoveArrays.push(textToAddToBricksArray);
+}
+
+
+//Funcion para hacer el movimiento anterior
+function rollBackGame()
+{
+	proxPositionToRollBack = (prevMove.length - 1);
+	if(proxPositionToRollBack != -1){
+		posBrick_x = 0;
+		posBrick_y = 0;
+		var vPrevMove = prevMove[proxPositionToRollBack].split('/--/');
+		var vPrevMoveArrays = prevMoveArrays[proxPositionToRollBack].split('/--/');
+		for(var i = 1; i <= 4; i++)
+		{
+			for(var j = 1; j <= 4; j++)
+			{
+				nameIAndJTemp = i.toString()+'-'+j.toString();
+				if($.inArray(nameIAndJTemp,vPrevMoveArrays) != -1)
+				{
+					numberToBrick = vPrevMove[$.inArray(nameIAndJTemp,vPrevMoveArrays)];
+				}
+				else
+				{
+					numberToBrick = "";
+				}
+				if(i == 1 && j == 1)
+				{
+					especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+				}
+				else
+				{
+					especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+				}
+				posBrick_x += 62;
+			}
+			posBrick_x = 0;
+			posBrick_y += 62;
+		}
+		$('#court').html(especificBrick);
+		bricksArray = vPrevMoveArrays;
+		prevMove.splice(proxPositionToRollBack,1);
+		prevMoveArrays.splice(proxPositionToRollBack,1);
+	}
+}
+
+//AddBrick agrega un cuadrado con un valor dos o cuatro
+function addBrick()
+{
+	endAddBrick = 0;
+	do
+	{
+		random_x = (1 + Math.floor(Math.random() * 4));
+		random_y = (1 + Math.floor(Math.random() * 4));
+		if(controlEmpty(random_x,random_y) == 0)
+		{
+			tempName = (random_x.toString())+'-'+(random_y.toString());
+			randomControl = (1 + Math.floor(Math.random() * 20));
+			if(randomControl > 18)
+			{
+				randomValue = 4;
+			}
+			else
+			{
+				randomValue = 2;
+			}
+			especificBrick = '<div class="numberBrick"><span>'+randomValue+'</span></div>';
+			
+			$('#brick'+tempName).css('display','none');
+			$('#brick'+tempName).html(especificBrick);
+			$('#brick'+tempName).css('background',getBackground(randomValue));
+			$('#brick'+tempName).fadeIn('fast');			
+			bricksArray.push(tempName);
+			endAddBrick = 1;
+		}
+	}while(endAddBrick == 0)
+}
+
+/*
+Se le agrega un i adelante a los parametros para denotar que son internos
+iRowOrColumn, represanta la i o la j que se le pasa para saber si hay que controlar una fila o una columna
+EmptyControl va a devolver uno de tres valores. Si es 0 o 2, el movimiento no se tiene que hacer por que ese lugar o es el mismo que el numero o esta ocupado por otro
+*/
+function emptyControl(iSide, iRowOrColumn, itempIAndJName)
+{
+	toReturn = 0;
+	switch (iSide)
+	{
+		case 1:
+			for(var k = 1; k <= 4;k++)
+			{
+				iControlName = iRowOrColumn.toString()+'-'+k.toString();
+				if(iControlName == itempIAndJName)
+				{
+					if(toReturn == 0)
+					{
+						return 0+'/--/'+iControlName;
+					}
+					else
+					{
+						return toReturn;
+					}
+				}
+				else
+				{
+					if($.inArray(iControlName,bricksArray) == -1)
+					{
+						if(toReturn == 0)
+						{
+							return 1+'/--/'+iControlName;
+						}
+						else
+						{
+							return toReturn;
+						}
+					}
+					else
+					{
+						//Fijarse el numero que tiene esa posicion devuelta y si es la misma sumarlos
+						valueControlName = $('#brick'+iControlName).children('div').children('span').text();
+						valueTempIAndJName = $('#brick'+itempIAndJName).children('div').children('span').text();
+						if(valueControlName == valueTempIAndJName)
+						{
+							if(numSumUp == parseInt(valueControlName))
+							{
+								toReturn = 0;
+							}
+							else
+							{
+								toReturn = 2+'/--/'+iControlName;	
+							}
+							
+							cantSum = 1;
+						}
+						else
+						{
+							toReturn = 0;
+						}
+					}
+				}
+			}
+			break;
+		case 2:
+			for(var k = 4; k >= 1;k--)
+			{
+				iControlName = iRowOrColumn.toString()+'-'+k.toString();
+				if(iControlName == itempIAndJName)
+				{
+					if(toReturn == 0)
+					{
+						return 0+'/--/'+iControlName;
+					}
+					else
+					{
+						return toReturn;
+					}
+				}
+				else
+				{
+					if($.inArray(iControlName,bricksArray) == -1)
+					{
+						if(toReturn == 0)
+						{
+							return 1+'/--/'+iControlName;
+						}
+						else
+						{
+							return toReturn;
+						}
+					}
+					else
+					{
+						//Fijarse el numero que tiene esa posicion devuelta y si es la misma sumarlos
+						valueControlName = $('#brick'+iControlName).children('div').children('span').text();
+						valueTempIAndJName = $('#brick'+itempIAndJName).children('div').children('span').text();
+						if(valueControlName == valueTempIAndJName)
+						{
+							if(numSumUp == parseInt(valueControlName))
+							{
+								toReturn = 0;
+							}
+							else
+							{
+								toReturn = 2+'/--/'+iControlName;	
+							}
+						}
+						else
+						{
+							toReturn = 0;
+						}
+					}
+				}
+			}
+			break;
+		case 3:
+			for(var k = 1; k <= 4;k++)
+			{
+				iControlName = k.toString()+'-'+iRowOrColumn.toString();
+				if(iControlName == itempIAndJName)
+				{
+					if(toReturn == 0)
+					{
+						return 0+'/--/'+iControlName;
+					}
+					else
+					{
+						return toReturn;
+					}
+				}
+				else
+				{
+					if($.inArray(iControlName,bricksArray) == -1)
+					{
+						if(toReturn == 0)
+						{
+							return 1+'/--/'+iControlName;
+						}
+						else
+						{
+							return toReturn;
+						}
+					}
+					else
+					{
+						//Fijarse el numero que tiene esa posicion devuelta y si es la misma sumarlos
+						valueControlName = $('#brick'+iControlName).children('div').children('span').text();
+						valueTempIAndJName = $('#brick'+itempIAndJName).children('div').children('span').text();
+						if(valueControlName == valueTempIAndJName)
+						{
+							if(numSumUp == parseInt(valueControlName))
+							{
+								toReturn = 0;
+							}
+							else
+							{
+								toReturn = 2+'/--/'+iControlName;	
+							}
+						}
+						else
+						{
+							toReturn = 0;
+						}
+					}
+				}
+			}
+			break;
+		case 4:
+			for(var k = 4; k >= 1;k--)
+			{
+				iControlName = k.toString()+'-'+iRowOrColumn.toString();
+				if(iControlName == itempIAndJName)
+				{
+					if(toReturn == 0)
+					{
+						return 0+'/--/'+iControlName;
+					}
+					else
+					{
+						return toReturn;
+					}
+				}
+				else
+				{
+					if($.inArray(iControlName,bricksArray) == -1)
+					{
+						if(toReturn == 0)
+						{
+							return 1+'/--/'+iControlName;
+						}
+						else
+						{
+							return toReturn;
+						}
+					}
+					else
+					{
+						//Fijarse el numero que tiene esa posicion devuelta y si es la misma sumarlos
+						valueControlName = $('#brick'+iControlName).children('div').children('span').text();
+						valueTempIAndJName = $('#brick'+itempIAndJName).children('div').children('span').text();
+						if(valueControlName == valueTempIAndJName)
+						{
+							if(numSumUp == parseInt(valueControlName))
+							{
+								toReturn = 0;
+							}
+							else
+							{
+								toReturn = 2+'/--/'+iControlName;	
+							}
+						}
+						else
+						{
+							toReturn = 0;
+						}
+					}
+				}
+			}
+			break;
+	}
+}
+
+//Controla para una posicion si esta vacia -- Devuelve 0 si se encuentra vacia
+function controlEmpty(iTemp,jTemp)
+{
+	tempName = iTemp.toString()+'-'+jTemp.toString();
+	if($.inArray(tempName,bricksArray) == -1)
+	{	
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+//Devuelve un color para background segun el numero que se pase
+function getBackground(number,pos)
+{
+	switch (number)
+	{
+		case 2:
+			color = '#eee4da';
+			$('#brick'+pos).children('div').children('span').css('color','black');
+			break;
+		case 4:
+			color = '#ede0c8';
+			$('#brick'+pos).children('div').children('span').css('color','black');
+			break;
+		case 8:
+			color = '#f2b179';
+			$('#brick'+pos).children('div').children('span').css('color','white');
+			//Tiene que ser blanco
+			break;
+		case 16:
+			color = '#f59563';
+			$('#brick'+pos).children('div').children('span').css('color','white');
+			//Tiene que ser blanco
+			break;
+		case 32:
+			color = '#f67c5f';
+			$('#brick'+pos).children('div').children('span').css('color','white');
+			//Blanco
+			break;
+		case 64:
+			color = '#f65e3b';
+			$('#brick'+pos).children('div').children('span').css('color','white');
+			//B
+			break;
+		case 128:
+			color = '#edcf72';
+			$('#brick'+pos).children('div').children('span').css('color','black');
+			//B pero no me se si se vera
+			break;
+		case 256: //Desde aca cambiar color
+			color = '#edcc61';
+			$('#brick'+pos).children('div').children('span').css('color','black');
+			//B pero no me se si se vera
+			break;
+		case 512:
+			color = '#edc850';
+			$('#brick'+pos).children('div').children('span').css('color','black');
+			//B
+			break;
+		case 1024:
+			color = '#edc53f';
+			//B
+			break;
+		case 2048:
+			color = '#FAD870';
+			break;
+		case 4096:
+			color = '#FAD870';
+			break;
+		case 8192:
+			color = '#FAD870';
+			break;
+	}
+	return color;
+}
+
+function startGame()
+{
+	posBrick_x = 0;
+	posBrick_y = 0;
+	startGame = 0;
+	winGame = 0;
+	loseGame = 0;
+	randomValue = 0;
+	numSumUp = 0;
+	score = 0;
+	
+	loadBrick();
+	keyUpControl(0);
+}
+
+$(document).ready(function(){
+	
+	startGame();
+	
+	$('body').keyup(function() 
+	{
+		switch(event.which) {
+			// 37 responde a la flecha izquierda
+			case 37:
+				keyUpControl(1);
+				break;
+			// 39 responde a la flecha derecha
+			case 39:
+				keyUpControl(2);
+				break;
+			// 38 responde a la flecha para arriba
+			case 38:
+				keyUpControl(3);
+				break;
+				
+			// 40 responde a la flecha para abajo
+			case 40:
+				keyUpControl(4);
+				break;
+		}
+	});
+	$('#buttonRollBack').click(function (){
+		rollBackGame();
+	});
+	
+});
+</script>
+<body>
+	<div id="headCourt">
+		<div id="points">
+			<span id="pointsText"></span>
+		</div>
+		<div id="reset">
+			<!--input type="button" id="buttonReset" name="reset" value=""/-->
+		</div>
+		<div id="rollback">
+			<span id="rollbackText"><input type="button" id="buttonRollBack" name="rollbackButton" value="Roll Back"/></span>
+		</div>
+	</div>
+	<div id="court">
+	</div>
+	<div id="testClick"></div>
+</body> 
+</html>

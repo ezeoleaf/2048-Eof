@@ -1,0 +1,260 @@
+case 1:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 1; j <= 4; j++)
+				{
+					if(controlEmpty(i,j,1) == 1)
+					{
+						controlName = (i.toString())+'-'+(j.toString());
+						for(var k = 0; k < bricksArray.length;k++)
+						{
+							brickName = bricksArray[k];
+							if(parseInt(brickName.charAt(2)) != 1){
+								if((controlName.charAt(0) == brickName.charAt(0)))
+								{
+									if((controlName.charAt(2) == brickName.charAt(2))){
+										numInBrick = $(('#brick'+controlName)).children('div').children('span').text();
+										bricksArray.pop(brickName);
+										$('#testClick').html('<span>'+numInBrick.toString()+'</span>');
+										$(('#brick'+controlName)).html('<div class="numberBrick"><span></span></div>');
+										$(('#brick'+controlName)).css('background-color','#ececec');
+										for(var l = 1; l < posArray.length; l++)
+										{
+											tempPosArray = posArray[l];
+											if(tempPosArray.charAt(0) == controlName.charAt(0))
+											{
+												$(('#brick'+tempPosArray)).html('<div class="numberBrick"><span>'+numInBrick.toString()+'</span></div>');
+												$(('#brick'+tempPosArray)).css('background',getBackground(2));
+												bricksArray.push(tempPosArray);
+											}
+										}
+										break;
+									}
+								}
+							}
+						}
+						
+					}
+				}
+			}
+			break;
+			
+			
+function controlBricks(side)
+{
+	$('#testClick').html('<span>'+bricksArray.length.toString()+'</span>');
+	addBrickControl = 0;
+	switch (side)
+	{
+		case 1:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 1; j <= 4; j++)
+				{
+					splitAndMove(side,i,j);
+					/*
+					tempIAndJName = i.toString()+'-'+j.toString();
+					if($.inArray(tempIAndJName,bricksArray) != -1)
+					{
+						var controlToSplit = emptyControl(side,i,tempIAndJName);
+						var vControlToSplit = controlToSplit.split('/--/');
+						if(vControlToSplit[0] == 1)
+						{
+							numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+							moveBricks(tempIAndJName, vControlToSplit[1], numInBrick);
+							addBrickControl = 1;
+						}
+						else if(vControlToSplit[0] == 2)
+						{
+							numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+							resultNumInBrick = parseInt(numInBrick) + parseInt(numInBrick);
+							moveBricks(tempIAndJName, vControlToSplit[1], resultNumInBrick);
+							addBrickControl = 1;
+						}
+					}
+					*/
+				}
+			}
+			break;
+		case 2:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 4; j >= 1; j--)
+				{
+					splitAndMove(side,i,j);
+					/*
+					tempIAndJName = i.toString()+'-'+j.toString();
+					if($.inArray(tempIAndJName,bricksArray) != -1)
+					{
+						var controlToSplit = emptyControl(side,i,tempIAndJName);
+						var vControlToSplit = controlToSplit.split('/--/');
+						if(vControlToSplit[0] == 1)
+						{
+							numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+							moveBricks(tempIAndJName, vControlToSplit[1], numInBrick);
+							addBrickControl = 1;
+						}
+						else if(vControlToSplit[0] == 2) 
+						{
+							numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();
+							resultNumInBrick = parseInt(numInBrick) + parseInt(numInBrick);
+							moveBricks(tempIAndJName, vControlToSplit[1], resultNumInBrick);
+							addBrickControl = 1;
+						}
+					}
+					*/
+				}
+			}
+			break;
+		case 3:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 1; j <= 4; j++)
+				{
+					splitAndMove(side,i,j);
+				}
+			}
+			break;
+		case 4:
+			for( var i = 4; i >= 1; i--)
+			{
+				for ( var j = 4; j >= 1; j--)
+				{
+					if(controlEmpty(j,i,2) == 0)
+					{
+						break;
+					}
+				}
+			}
+			break;
+	}
+	if(addBrickControl == 1){
+		addBrick();
+	}
+}
+
+
+//Controla segun la tecla que se aprete cual es el proximo cuadrado libre y si se puede mover
+function controlSideBricks(side)
+{
+	//FreeSpace
+	canMove = 0;
+	switch (side)
+	{
+		case 1:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 1; j <= 4; j++)
+				{
+					if(controlEmpty(i,j) == 0)
+					{
+						tempName = i.toString()+'-'+j.toString();
+						posArray[i] = tempName;
+						canMove = 1;
+						break;
+					}
+				}
+			}
+			break;
+		case 2:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 4; j >= 1; j--)
+				{
+					if(controlEmpty(i,j) == 0)
+					{
+						tempName = i.toString()+'-'+j.toString();
+						posArray[i] = tempName;
+						canMove = 1;
+						break;
+					}
+				}
+			}
+			break;
+		case 3:
+			for( var i = 1; i <= 4; i++)
+			{
+				for ( var j = 1; j <= 4; j++)
+				{
+					if(controlEmpty(j,i) == 0)
+					{
+						tempName = i.toString()+'-'+j.toString();
+						posArray[i] = tempName;
+						canMove = 1;
+						break;
+					}
+				}
+			}
+			break;
+		case 4:
+			for( var i = 4; i >= 1; i--)
+			{
+				for ( var j = 4; j >= 1; j--)
+				{
+					if(controlEmpty(j,i) == 0)
+					{
+						tempName = i.toString()+'-'+j.toString();
+						posArray[i] = tempName;
+						canMove = 1;
+						break;
+					}
+				}
+			}
+			break;
+	}
+	var testArray;
+	for (var i = 1; i <= 4; i++)
+	{
+		testArray += posArray[i];
+	}
+	$('#testClick').html('<span>'+testArray+'</span>');
+	return canMove;
+}
+
+
+function getBackground(number)
+{
+	switch (number)
+	{
+		case 2:
+			color = '#C3C3C3';
+			break;
+		case 4:
+			color = '#D9BD8D';
+			break;
+		case 8:
+			color = '#FABC93';
+			break;
+		case 16:
+			color = '#F7924F';
+			break;
+		case 32:
+			color = '#FA5C5C';
+			break;
+		case 64:
+			color = '#F70000';
+			break;
+		case 128:
+			color = '#FAD870';
+			break;
+		case 256: //Desde aca cambiar color
+			color = '#FAD870';
+			break;
+		case 512:
+			color = '#FAD870';
+			break;
+		case 1024:
+			color = '#FAD870';
+			break;
+		case 2048:
+			color = '#FAD870';
+			break;
+		case 4096:
+			color = '#FAD870';
+			break;
+		case 8192:
+			color = '#FAD870';
+			break;
+	}
+	return color;
+}
