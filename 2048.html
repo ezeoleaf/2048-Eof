@@ -306,47 +306,54 @@ function addNewPos()
 //Funcion para hacer el movimiento anterior
 function rollBackGame()
 {
-	proxPositionToRollBack = (prevMove.length - 1);
-	if(proxPositionToRollBack != -1){
-		posBrick_x = 0;
-		posBrick_y = 0;
-		var vPrevMove = prevMove[proxPositionToRollBack].split('/--/');
-		var vPrevMoveArrays = prevMoveArrays[proxPositionToRollBack].split('/--/');
-		for(var i = 1; i <= 4; i++)
-		{
-			for(var j = 1; j <= 4; j++)
-			{
-				nameIAndJTemp = i.toString()+'-'+j.toString();
-				if($.inArray(nameIAndJTemp,vPrevMoveArrays) != -1)
-				{
-					numberToBrick = vPrevMove[$.inArray(nameIAndJTemp,vPrevMoveArrays)];
-					numBackGround = parseInt(numberToBrick);
-				}
-				else
-				{
-					numberToBrick = "";
-					numBackGround = 0;
-				}
-				if(i == 1 && j == 1)
-				{
-					especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
-
-				}
-				else
-				{
-					especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
-				}
-				tempNameBackground = "#brick"+i.toString()+"-"+j.toString();
-				$(tempNameBackground).css('background',getBackground(numBackGround));
-				posBrick_x += 62;
-			}
+	if(cantOfRollBack != 0){
+		proxPositionToRollBack = (prevMove.length - 1);
+		if(proxPositionToRollBack != -1){
 			posBrick_x = 0;
-			posBrick_y += 62;
+			posBrick_y = 0;
+			var vPrevMove = prevMove[proxPositionToRollBack].split('/--/');
+			var vPrevMoveArrays = prevMoveArrays[proxPositionToRollBack].split('/--/');
+			for(var i = 1; i <= 4; i++)
+			{
+				for(var j = 1; j <= 4; j++)
+				{
+					nameIAndJTemp = i.toString()+'-'+j.toString();
+					if($.inArray(nameIAndJTemp,vPrevMoveArrays) != -1)
+					{
+						numberToBrick = vPrevMove[$.inArray(nameIAndJTemp,vPrevMoveArrays)];
+						numBackGround = parseInt(numberToBrick);
+					}
+					else
+					{
+						numberToBrick = "";
+						numBackGround = 0;
+					}
+					if(i == 1 && j == 1)
+					{
+						especificBrick = '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+
+					}
+					else
+					{
+						especificBrick += '<div id="brick'+(i.toString())+'-'+(j.toString())+'" class="brick" style="left: '+posBrick_x+'px; top: '+posBrick_y+'px;background: '+getBackground(numBackGround,nameIAndJTemp)+';'+getNumberColor(numBackGround)+'"><div class="numberBrick"><span>'+numberToBrick+'</span></div></div>';
+					}
+					tempNameBackground = "#brick"+i.toString()+"-"+j.toString();
+					$(tempNameBackground).css('background',getBackground(numBackGround));
+					posBrick_x += 62;
+				}
+				posBrick_x = 0;
+				posBrick_y += 62;
+			}
+			cantOfRollBack -= 1;
+			$('#rollbackText').html('<input type="image" src="Img/'+cantOfRollBack.toString()+'.png" id="buttonRollBack" width="50px" height="50px"/>');
+			$('#buttonRollBack').click(function (){
+				rollBackGame();
+			});
+			$('#court').html(especificBrick);
+			bricksArray = vPrevMoveArrays;
+			prevMove.splice(proxPositionToRollBack,1);
+			prevMoveArrays.splice(proxPositionToRollBack,1);
 		}
-		$('#court').html(especificBrick);
-		bricksArray = vPrevMoveArrays;
-		prevMove.splice(proxPositionToRollBack,1);
-		prevMoveArrays.splice(proxPositionToRollBack,1);
 	}
 }
 
@@ -747,7 +754,10 @@ function startGame()
 	randomValue = 0;
 	numSumUp = 0;
 	score = 0;
-	
+	cantOfRollBack = 5;
+	$('#rollbackText').html('<input type="image" src="Img/5.png" id="buttonRollBack" width="50px" height="50px"/>');
+	//$('#buttonRollBack').css('background','url:Img/5.png');
+
 	loadBrick();
 	keyUpControl(0);
 }

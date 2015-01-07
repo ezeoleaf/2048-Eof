@@ -85,9 +85,9 @@
 #rollbackText
 {	
 	position: relative;
-	left: 170px;
-	top: 10px;
-	background: #e3e3e3;
+	left: 180px;
+	top: -3px;
+	/*background: #e3e3e3;*/
 	width: 70px;
 	height: 30px;
 	color: black;
