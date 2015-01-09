@@ -17,6 +17,7 @@ var posArray = [];
 var controledBricks = [];
 var prevMove = [];
 var prevMoveArrays = [];
+var prevPoints = [];
 
 function loadBrick()
 {
@@ -245,6 +246,7 @@ function controlArray()
 	{
 		prevMove.splice(0,1);
 		prevMoveArrays.splice(0,1);
+		prevPoints.splice(0,1);
 		addNewPos();
 	}
 }
@@ -273,7 +275,9 @@ function moveBricks(oldPos,newPos,numberToAssign)
 function addNewPos()
 {
 	textToAddToPrevMove = '';
+	textToAddToPrevMoveArrays = '';
 	textToAddToBricksArray = '';
+	textToAddToPrevPoints = '';
 	for(var i = 1; i <= 4; i++)
 	{
 		for(var j = 1; j <= 4; j++)
@@ -283,14 +287,20 @@ function addNewPos()
 			if(numInBrick != "")
 			{
 				textToAddToPrevMove = textToAddToPrevMove + $('#brick'+tempIAndJName).children('div').children('span').text();
+				textToAddToPrevMoveArrays = textToAddToPrevMoveArrays + (i.toString()+'-'+j.toString());
 				if(i != 4 || j != 4)
 				{
 					textToAddToPrevMove += '/--/';
+					textToAddToPrevMoveArrays += '/--/';
 				}	
 			}			
 		}
 	}
+	
+	prevPoints.push(score);
 	prevMove.push(textToAddToPrevMove);
+	prevMoveArrays.push(textToAddToPrevMoveArrays);
+	/*
 	for(var i = 0; i < bricksArray.length; i++)
 	{
 		textToAddToBricksArray += bricksArray[i];
@@ -300,6 +310,7 @@ function addNewPos()
 		}
 	}
 	prevMoveArrays.push(textToAddToBricksArray);
+	*/
 }
 
 
@@ -350,9 +361,12 @@ function rollBackGame()
 				rollBackGame();
 			});
 			$('#court').html(especificBrick);
+			$('#pointsText').html(prevPoints[proxPositionToRollBack]);
+			score = prevPoints[proxPositionToRollBack];
 			bricksArray = vPrevMoveArrays;
 			prevMove.splice(proxPositionToRollBack,1);
 			prevMoveArrays.splice(proxPositionToRollBack,1);
+			prevPoints.splice(proxPositionToRollBack,1);
 		}
 	}
 }
