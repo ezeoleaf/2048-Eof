@@ -367,6 +367,24 @@ function rollBackGame()
 			prevMove.splice(proxPositionToRollBack,1);
 			prevMoveArrays.splice(proxPositionToRollBack,1);
 			prevPoints.splice(proxPositionToRollBack,1);
+			colorControl();
+		}
+	}
+}
+
+function colorControl()
+{
+	for(var i = 1; i <= 4; i++)
+	{
+		for(var j = 1; j <= 4; j++)
+		{
+			tempIAndJName = i.toString()+'-'+j.toString();
+			numInBrick = $('#brick'+tempIAndJName).children('div').children('span').text();			
+			if(numInBrick != "")
+			{
+				getBackground(parseInt(numInBrick),tempIAndJName);
+				//$('#brick'+tempIAndJName).css('color',getNumberColor(parseInt()))
+			}			
 		}
 	}
 }
