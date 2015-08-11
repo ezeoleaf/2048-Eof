@@ -714,63 +714,67 @@ function getBackground(number,pos)
 	switch (number)
 	{
 		case 0:
-			color = '#e3e3e3';
+			color = '#ffffff';
 			break;
 		case 2:
-			color = '#eee4da';
+			color = '#ffffff';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			break;
 		case 4:
-			color = '#ede0c8';
+			color = '#ffffff';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			break;
 		case 8:
-			color = '#f2b179';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#ffffff';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Tiene que ser blanco
 			break;
 		case 16:
-			color = '#f59563';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#ffffff';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Tiene que ser blanco
 			break;
 		case 32:
-			color = '#f67c5f';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#ffffff';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Blanco
 			break;
 		case 64:
-			color = '#f65e3b';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#ffffff';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//B
 			break;
 		case 128:
-			color = '#edcf72';
-			$('#brick'+pos).children('div').children('span').css('color','black');
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			//B pero no me se si se vera
 			break;
 		case 256: //Desde aca cambiar color
-			color = '#edcc61';
-			$('#brick'+pos).children('div').children('span').css('color','black');
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			//B pero no me se si se vera
 			break;
 		case 512:
-			color = '#edc850';
-			$('#brick'+pos).children('div').children('span').css('color','black');
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			//B
 			break;
 		case 1024:
-			color = '#edc53f';
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			//B
 			break;
 		case 2048:
-			color = '#FAD870';
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			break;
 		case 4096:
-			color = '#FAD870';
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			break;
 		case 8192:
-			color = '#FAD870';
+			color = '#000000';
+			$('#brick'+pos).children('div').children('span').css('color','white');
 			break;
 	}
 	return color;
