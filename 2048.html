@@ -261,7 +261,7 @@ function moveBricks(oldPos,newPos,numberToAssign)
 {
 	
 	$('#brick'+oldPos).html('<div class="numberBrick"><span></span></div>');
-	$('#brick'+oldPos).css('background-color','#e3e3e3');
+	$('#brick'+oldPos).css('background-color','#ffffff');
 	$('#brick'+newPos).html('<div class="numberBrick"><span>'+numberToAssign+'</span></div>');
 	$('#brick'+newPos).css('background-color',getBackground(numberToAssign,newPos));
 	
@@ -714,49 +714,49 @@ function getBackground(number,pos)
 	switch (number)
 	{
 		case 0:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			break;
 		case 2:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			break;
 		case 4:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			break;
 		case 8:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Tiene que ser blanco
 			break;
 		case 16:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Tiene que ser blanco
 			break;
 		case 32:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			//Blanco
 			break;
 		case 64:
-			color = '#ffffff';
+			color = '#f0f0f0';
 			$('#brick'+pos).children('div').children('span').css('color','black');
 			//B
 			break;
 		case 128:
-			color = '#000000';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#f0f0f0';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//B pero no me se si se vera
 			break;
 		case 256: //Desde aca cambiar color
-			color = '#000000';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#f0f0f0';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//B pero no me se si se vera
 			break;
 		case 512:
-			color = '#000000';
-			$('#brick'+pos).children('div').children('span').css('color','white');
+			color = '#f0f0f0';
+			$('#brick'+pos).children('div').children('span').css('color','black');
 			//B
 			break;
 		case 1024:
