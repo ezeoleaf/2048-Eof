@@ -1,0 +1,102 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+	<title>2048</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+	<link href="2048ResponsiveStyle.css" rel="stylesheet" type="text/css" />
+</head> 
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12" id="header">
+				<h3>2048 Responsive</h3>
+			</div>
+		</div>
+		<div class="row" id="tools">
+			<div class="col-xs-4">
+				<span>Puntos</span>
+			</div>
+			<div class="col-xs-4">
+				<span>Reset</span>
+			</div>
+			<div class="col-xs-4">
+				<span>Rollback</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2"></div>
+			<div class="brick col-xs-2" id="brick1-1">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick1-2">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick1-3">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick1-4">&nbsp;</div>
+			<div class="col-xs-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2"></div>
+			<div class="brick col-xs-2" id="brick2-1">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick2-2">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick2-3">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick2-4">&nbsp;</div>
+			<div class="col-xs-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2"></div>
+			<div class="brick col-xs-2" id="brick3-1">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick3-2">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick3-3">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick3-4">&nbsp;</div>
+			<div class="col-xs-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2"></div>
+			<div class="brick col-xs-2" id="brick4-1">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick4-2">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick4-3">&nbsp;</div>
+			<div class="brick col-xs-2" id="brick4-4">&nbsp;</div>
+			<div class="col-xs-2"></div>
+		</div>
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+
+	var windowHeight, windowWidth;
+
+	function resizeBricks()
+	{
+		if(windowHeight == $(window).height()) //Si el height es igual al anterior entonces el width cambio
+		{
+			windowWidth = $(window).width();
+
+		}
+		else //El height cambio siguiendo lo anterior
+		{
+			windowHeight = $(window).height();
+			headerHeight = $('#header').height();
+			toolsHeight = $('#tools').height();
+		}
+
+		var total = windowHeight - headerHeight - toolsHeight;
+		var brickSize = parseInt(total / 4);
+		$('.brick').width(brickSize);
+		$('.brick').height(brickSize);
+	}
+
+	function setWindowSize()
+	{
+		windowHeight = 0;
+		windowWidth = $(window).width();
+	}
+
+	$(document).ready(function(){
+		setWindowSize();
+		resizeBricks();
+	});
+	$(window).resize(function(){
+		resizeBricks();
+	})
+	</script>
+</body> 
+</html>
